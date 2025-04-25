@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">project-01</string>
+
+    <string name="tab_name_1">Your films</string>
+    <string name="tab_name_2">SomeOtherTab</string>
+    <string name="ic_add_description">add</string>
+    <string name="list_desc">List of media items</string>
+    <string name="tab_desc">Choose tab</string>
+    <string name="ic_item_desc">miniature</string>
+
+    <string name="item_title">Title</string>
+    <string name="item_premierDate">Premier Date</string>
+    <string name="item_status">Status</string>
+    <string name="item_category">Category</string>
+</resources>
