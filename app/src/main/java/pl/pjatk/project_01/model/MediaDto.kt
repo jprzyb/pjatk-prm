@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import androidx.annotation.DrawableRes
 
 @Entity(tableName = "media")
-data class Media(
+data class MediaDto(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 

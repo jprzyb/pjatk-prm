@@ -1,7 +1,7 @@
 package pl.pjatk.project_01.repository
 
-import pl.pjatk.project_01.model.Media
+import pl.pjatk.project_01.model.MediaDto
 
 interface MediaRepository {
-    fun getMediaList(): List<Media>
+    suspend fun getMediaList(): List<MediaDto>
 }

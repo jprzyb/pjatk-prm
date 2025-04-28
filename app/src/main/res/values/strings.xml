@@ -12,4 +12,18 @@
     <string name="item_premierDate">Premier Date</string>
     <string name="item_status">Status</string>
     <string name="item_category">Category</string>
+
+
+    <string name="edit_title">Edit</string>
+    <string name="edit_desc">Edit</string>
+
+    <string name="edit_item_title">Title</string>
+    <string name="edit_item_premier_date">Premier date</string>
+    <string name="edit_item_category">Category</string>
+    <string name="edit_item_discard">Discard item</string>
+    <string name="edit_item_add">Add new item</string>
+    <string name="edit_item_image">Image</string>
+    <string name="edit_item_save">Save changes</string>
+    <string name="edit_item_premier_date_desc">Enter a premier date</string>
+
 </resources>
