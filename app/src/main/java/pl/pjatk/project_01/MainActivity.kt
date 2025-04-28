@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         mediaListAdapter = MediaListAdapter { mediaItem ->
             val intent = Intent(this, EditItemActivity::class.java)
-            intent.putExtra("ITEM_ID", mediaItem.id)
+            intent.putExtra("mediaItemId", mediaItem.id.toLong())
             startActivity(intent)
         }
 
