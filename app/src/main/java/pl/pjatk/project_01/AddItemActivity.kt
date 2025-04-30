@@ -3,14 +3,14 @@ package pl.pjatk.project_01
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +23,9 @@ import pl.pjatk.project_01.model.Status
 import pl.pjatk.project_01.repository.AppDatabase
 import pl.pjatk.project_01.repository.MediaRepository
 import pl.pjatk.project_01.repository.MediaRepositoryImpl
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 class AddItemActivity: AppCompatActivity() {
     lateinit var binding: ActivityAddItemBinding
@@ -42,6 +45,7 @@ class AddItemActivity: AppCompatActivity() {
         }
 
         setListeners()
+        populateData()
 
         database = Room.databaseBuilder(
             applicationContext,
@@ -50,9 +54,21 @@ class AddItemActivity: AppCompatActivity() {
         ).build()
     }
 
+    private fun populateData() {
+        val categories = Category.entries.map { it }
+        categoryAdapter = ArrayAdapter<Category>(
+            this@AddItemActivity,
+            android.R.layout.simple_spinner_item,
+            categories.toTypedArray()
+        )
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.addItemCategory.adapter = categoryAdapter
+        binding.addItemImage.setImageBitmap(ImageUtils.bitArrayToBitmap(ImageUtils.iconToBitArray(this@AddItemActivity, R.drawable.ic_add)))
+    }
+
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
-            val resizedBitmap = resizeImage(uri, 120, 120)
+            val resizedBitmap = resizeImage(uri, 24, 24)
             resizedBitmap?.let { bitmap ->
                 binding.addItemImage.setImageBitmap(bitmap)
             }
@@ -65,9 +81,10 @@ class AddItemActivity: AppCompatActivity() {
         }
 
         binding.addItemSave.setOnClickListener {
-            if (isEverythingFilled()) {
-                val updatedItem = MediaDto(
-//                    icon = binding.addItemImage.drawable,
+            val validationMsg = isEverythingFilled()
+            if (validationMsg == "ALL_GOOD") {
+                val newItem = MediaDto(
+                    icon = ImageUtils.imageToBitArray(binding.addItemImage.drawable.toBitmap()),
                     title = binding.addItemTitle.text.toString(),
                     releaseDate = binding.addItemPremierDateInput.text.toString(),
                     category = Category.valueOf(binding.addItemCategory.selectedItem.toString()),
@@ -76,9 +93,13 @@ class AddItemActivity: AppCompatActivity() {
                 )
 
                 lifecycleScope.launch {
-                    mediaRepository.insert(updatedItem)
+                    mediaRepository.insert(newItem)
                     finish()
                 }
+            }
+            else{
+                binding.addItemEditInfo.text = validationMsg
+                binding.addItemEditInfo.isVisible = true
             }
         }
 
@@ -109,19 +130,25 @@ class AddItemActivity: AppCompatActivity() {
         return BitmapFactory.decodeStream(inputStream2, null, options)
     }
 
-    fun drawableToIcon(drawable: Drawable): Icon? {
-        return if (drawable is BitmapDrawable) {
-            Icon.createWithBitmap(drawable.bitmap)
-        } else {
-            null
-        }
+    private fun isEverythingFilled(): String {
+        if(binding.addItemImage.drawable == R.drawable.ic_add.toDrawable()) return "Please add image!"
+        else if(binding.addItemTitle.text.toString() == "Title" || binding.addItemTitle.text.toString().isEmpty()) return "Please add title!"
+        else if (!checkDate(binding.addItemPremierDateInput.text.toString())) return "Please add valid date(dd-mm-yyyy)!"
+        return "ALL_GOOD"
     }
 
-    private fun AddItemActivity.isEverythingFilled(): Boolean {
-        return true
+}
 
+private fun checkDate(string: String): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    return try {
+        val inputDate = LocalDate.parse(string, formatter)
+
+        val today = LocalDate.now()
+        inputDate.isBefore(today) || inputDate.isEqual(today)
+    } catch (e: DateTimeParseException) {
+        false
     }
-
 }
 
 

@@ -1,6 +1,7 @@
 package pl.pjatk.project_01.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,7 @@ class MediaItem(val itemViewBinding: ItemMediaBinding) : RecyclerView.ViewHolder
         premierDate.text = mediaItem.releaseDate.toString()
         category.text = mediaItem.category.toString()
         status.text = mediaItem.status.toString()
-        image.setImageResource(mediaItem.icon)
+        image.setImageBitmap(BitmapFactory.decodeByteArray(mediaItem.icon, 0, mediaItem.icon.size))
 
         root.setOnClickListener {
             onItemClicked(mediaItem)

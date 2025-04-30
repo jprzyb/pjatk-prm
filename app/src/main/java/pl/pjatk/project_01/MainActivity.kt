@@ -21,7 +21,6 @@ import pl.pjatk.project_01.repository.MediaRepository
 import pl.pjatk.project_01.repository.MediaRepositoryImpl
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -31,22 +30,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
+//        deleteDatabase("media")
+        setVars()
         setContentView(binding.root)
-
-        mediaRepository = MediaRepositoryImpl(AppDatabase.open(this).media)
-
-        mediaListAdapter = MediaListAdapter { mediaItem ->
-            val intent = Intent(this, EditItemActivity::class.java)
-            intent.putExtra("mediaItemId", mediaItem.id.toLong())
-            startActivity(intent)
-        }
-
-        binding.mediaList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = mediaListAdapter
-        }
+        setListeners()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -54,11 +41,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        lifecycleScope.launch {
-            createDB()
-        }
 
         lifecycleScope.launch {
+            createDB()
             mediaListAdapter.mediaList = sortMediaListByDate(mediaRepository.getMediaList())
         }
     }
@@ -75,9 +60,9 @@ class MainActivity : AppCompatActivity() {
     suspend fun createDB() = withContext (Dispatchers.IO) {
         val media = AppDatabase.open(this@MainActivity).media
         if(media.getAll().isEmpty()){
-            media.insert(MediaDto(1, R.drawable.koziolek, "Koziolek Matolek", "14-12-1932", Category.MOVIE, Status.WATCHED, "Good movie."))
-            media.insert(MediaDto(2, R.drawable.myszka, "Myszka Miki", "18-11-1928", Category.MOVIE, Status.WATCHED, "I like it."))
-            media.insert(MediaDto(3, R.drawable.reksio, "Reksio", "05-02-1967", Category.MOVIE, Status.NOT_WATCHED, ""))
+            media.insert(MediaDto(1, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.koziolek), "Koziolek Matolek", "14-12-1932", Category.MOVIE, Status.WATCHED, "Good movie."))
+            media.insert(MediaDto(2, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.myszka), "Myszka Miki", "18-11-1928", Category.MOVIE, Status.WATCHED, "I like it."))
+            media.insert(MediaDto(3, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.reksio), "Reksio", "05-02-1967", Category.MOVIE, Status.NOT_WATCHED, ""))
         }
         println(media.getAll().joinToString())
     }
@@ -95,4 +80,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun setVars(){
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        mediaRepository = MediaRepositoryImpl(AppDatabase.open(this).media)
+        mediaListAdapter = MediaListAdapter { mediaItem ->
+            val intent = Intent(this, EditItemActivity::class.java)
+            intent.putExtra("mediaItemId", mediaItem.id.toLong())
+            startActivity(intent)
+        }
+
+        binding.mediaList.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = mediaListAdapter
+        }
+    }
+
+    fun setListeners(){
+        binding.addButton.setOnClickListener {
+            val intent = Intent(this, AddItemActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
 }

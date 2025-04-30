@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
@@ -20,6 +22,9 @@ import pl.pjatk.project_01.model.Status
 import pl.pjatk.project_01.repository.AppDatabase
 import pl.pjatk.project_01.repository.MediaRepository
 import pl.pjatk.project_01.repository.MediaRepositoryImpl
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 class EditItemActivity: AppCompatActivity() {
     lateinit var binding: ActivityEditItemBinding
@@ -69,7 +74,7 @@ class EditItemActivity: AppCompatActivity() {
 
     private fun populateData(mediaItem: MediaDto) {
         binding.editItemTitle.setText(mediaItem.title)
-        binding.editItemImage.setImageResource(mediaItem.icon)
+        binding.editItemImage.setImageBitmap(ImageUtils.bitArrayToBitmap(mediaItem.icon))
         binding.editItemPremierDateInput.setText(mediaItem.releaseDate)
         val categories = Category.entries.map { it }
         categoryAdapter = ArrayAdapter<Category>(
@@ -117,8 +122,10 @@ class EditItemActivity: AppCompatActivity() {
 
         binding.editItemSave.setOnClickListener {
             val existingItem = mediaItemToEdit
-            if (existingItem != null) {
+            val validationMsg = isEverythingFilled()
+            if (validationMsg == "ALL_GOOD" && existingItem != null) {
                 val updatedItem = existingItem.copy(
+                    icon = ImageUtils.imageToBitArray(binding.editItemImage.drawable.toBitmap()),
                     title = binding.editItemTitle.text.toString(),
                     releaseDate = binding.editItemPremierDateInput.text.toString(),
                     category = Category.valueOf(binding.editItemCategory.selectedItem.toString()),
@@ -130,6 +137,10 @@ class EditItemActivity: AppCompatActivity() {
                     mediaRepository.update(updatedItem)
                     finish()
                 }
+            }
+            else{
+                binding.editItemEditInfo.text = validationMsg
+                binding.editItemEditInfo.isVisible = true
             }
         }
 
@@ -164,6 +175,26 @@ class EditItemActivity: AppCompatActivity() {
         options.inSampleSize = scaleFactor
 
         return BitmapFactory.decodeStream(inputStream2, null, options)
+    }
+
+    private fun isEverythingFilled(): String {
+        if(binding.editItemImage.drawable == R.drawable.ic_add.toDrawable()) return "Please add image!"
+        else if(binding.editItemTitle.text.toString() == "Title" || binding.editItemTitle.text.toString().isEmpty()) return "Please add title!"
+        else if (!checkDate(binding.editItemPremierDateInput.text.toString())) return "Please add valid date(dd-mm-yyyy)!"
+        return "ALL_GOOD"
+    }
+
+}
+
+private fun checkDate(string: String): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    return try {
+        val inputDate = LocalDate.parse(string, formatter)
+
+        val today = LocalDate.now()
+        inputDate.isBefore(today) || inputDate.isEqual(today)
+    } catch (e: DateTimeParseException) {
+        false
     }
 
 }
