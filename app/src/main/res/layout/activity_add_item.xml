@@ -15,30 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:text="@string/edit_item_image"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_item_image"
-        app:layout_constraintEnd_toStartOf="@+id/edit_item_image"
-        app:layout_constraintTop_toTopOf="@+id/edit_item_image"
+        app:layout_constraintBottom_toBottomOf="@+id/add_item_image"
+        app:layout_constraintEnd_toStartOf="@+id/add_item_image"
+        app:layout_constraintTop_toTopOf="@+id/add_item_image"
         app:layout_constraintVertical_bias="0.495" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="@string/edit_item_comment"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_item_comment"
-        app:layout_constraintEnd_toStartOf="@+id/edit_item_comment"
-        app:layout_constraintTop_toTopOf="@+id/edit_item_comment" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="@string/item_status"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_item_status"
-        app:layout_constraintEnd_toStartOf="@+id/edit_item_status"
-        app:layout_constraintTop_toTopOf="@+id/edit_item_status" />
 
     <TextView
         android:id="@+id/textView6"
@@ -46,9 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:text="@string/edit_item_category"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_item_category"
-        app:layout_constraintEnd_toStartOf="@+id/edit_item_category"
-        app:layout_constraintTop_toTopOf="@+id/edit_item_category" />
+        app:layout_constraintBottom_toBottomOf="@+id/add_item_category"
+        app:layout_constraintEnd_toStartOf="@+id/add_item_category"
+        app:layout_constraintTop_toTopOf="@+id/add_item_category" />
 
     <TextView
         android:id="@+id/textView3"
@@ -56,9 +36,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:text="@string/edit_item_title"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_item_title"
-        app:layout_constraintEnd_toStartOf="@+id/edit_item_title"
-        app:layout_constraintTop_toTopOf="@+id/edit_item_title" />
+        app:layout_constraintBottom_toBottomOf="@+id/add_item_title"
+        app:layout_constraintEnd_toStartOf="@+id/add_item_title"
+        app:layout_constraintTop_toTopOf="@+id/add_item_title" />
 
     <TextView
         android:id="@+id/textView4"
@@ -66,9 +46,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:text="@string/edit_item_premier_date"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_item_premier_date_input"
-        app:layout_constraintEnd_toStartOf="@+id/edit_item_premier_date_input"
-        app:layout_constraintTop_toTopOf="@+id/edit_item_premier_date_input" />
+        app:layout_constraintBottom_toBottomOf="@+id/add_item_premier_date_input"
+        app:layout_constraintEnd_toStartOf="@+id/add_item_premier_date_input"
+        app:layout_constraintTop_toTopOf="@+id/add_item_premier_date_input" />
 
     <TextView
         android:id="@+id/editTitle"
@@ -85,13 +65,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/edit_item_image"
+        android:id="@+id/add_item_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/edit_item_image"
-        app:layout_constraintBottom_toTopOf="@+id/edit_item_title"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTitle"
@@ -99,7 +79,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
-        android:id="@+id/edit_item_title"
+        android:id="@+id/add_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -114,10 +94,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_image" />
+        app:layout_constraintTop_toBottomOf="@+id/add_item_image" />
 
     <EditText
-        android:id="@+id/edit_item_premier_date_input"
+        android:id="@+id/add_item_premier_date_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -130,11 +110,11 @@
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_title"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_title"
         tools:ignore="TextContrastCheck" />
 
     <Spinner
-        android:id="@+id/edit_item_category"
+        android:id="@+id/add_item_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -144,22 +124,10 @@
         android:tooltipText="@string/edit_item_category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_premier_date_input" />
-
-    <Switch
-        android:id="@+id/edit_item_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minHeight="48dp"
-        android:text="@string/edit_item_status"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_category"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toBottomOf="@+id/add_item_premier_date_input" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/edit_item_discard"
+        android:id="@+id/add_item_discard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -170,12 +138,12 @@
         app:backgroundTint="@color/design_default_color_error"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_comment"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_category"
         app:srcCompat="@android:drawable/ic_delete"
         tools:ignore="ImageContrastCheck" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/edit_Item_Save"
+        android:id="@+id/add_item_Save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -186,26 +154,12 @@
         app:backgroundTint="@android:color/holo_green_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_comment"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_category"
         app:srcCompat="?android:attr/textCheckMark"
         tools:ignore="ImageContrastCheck" />
 
-    <EditText
-        android:id="@+id/edit_item_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:ems="10"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:text="@string/edit_item_comment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_status" />
-
     <TextView
-        android:id="@+id/edit_item_edit_info"
+        android:id="@+id/add_item_edit_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -215,8 +169,8 @@
         android:textColor="#F44336"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/edit_Item_Save"
-        app:layout_constraintStart_toEndOf="@+id/edit_item_discard"
-        app:layout_constraintTop_toBottomOf="@+id/edit_item_comment" />
+        app:layout_constraintEnd_toStartOf="@+id/add_item_Save"
+        app:layout_constraintStart_toEndOf="@+id/add_item_discard"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_category" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

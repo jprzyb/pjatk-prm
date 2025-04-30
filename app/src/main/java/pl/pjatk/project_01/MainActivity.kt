@@ -19,6 +19,8 @@ import pl.pjatk.project_01.model.Status
 import pl.pjatk.project_01.repository.AppDatabase
 import pl.pjatk.project_01.repository.MediaRepository
 import pl.pjatk.project_01.repository.MediaRepositoryImpl
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            mediaListAdapter.mediaList = mediaRepository.getMediaList()
+            mediaListAdapter.mediaList = sortMediaListByDate(mediaRepository.getMediaList())
         }
     }
 
@@ -65,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         lifecycleScope.launch {
-            mediaListAdapter.mediaList = mediaRepository.getMediaList()
+            mediaListAdapter.mediaList = sortMediaListByDate(mediaRepository.getMediaList())
         }
     }
 
@@ -78,5 +80,19 @@ class MainActivity : AppCompatActivity() {
             media.insert(MediaDto(3, R.drawable.reksio, "Reksio", "05-02-1967", Category.MOVIE, Status.NOT_WATCHED, ""))
         }
         println(media.getAll().joinToString())
+    }
+
+    fun sortMediaListByDate(mediaList: List<MediaDto>, descending: Boolean = false): List<MediaDto> {
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
+        return if (descending) {
+            mediaList.sortedByDescending {
+                runCatching { LocalDate.parse(it.releaseDate, formatter) }.getOrNull()
+            }
+        } else {
+            mediaList.sortedBy {
+                runCatching { LocalDate.parse(it.releaseDate, formatter) }.getOrNull()
+            }
+        }
     }
 }

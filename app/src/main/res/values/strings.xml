@@ -25,5 +25,8 @@
     <string name="edit_item_image">Image</string>
     <string name="edit_item_save">Save changes</string>
     <string name="edit_item_premier_date_desc">Enter a premier date</string>
+    <string name="edit_item_status">Watched</string>
+    <string name="edit_item_comment">Comment</string>
+    <string name="edit_item_edit_info">You cannot edit watched item</string>
 
 </resources>

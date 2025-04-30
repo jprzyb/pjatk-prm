@@ -1,8 +1,13 @@
 package pl.pjatk.project_01
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
@@ -18,9 +23,10 @@ import pl.pjatk.project_01.repository.MediaRepositoryImpl
 
 class EditItemActivity: AppCompatActivity() {
     lateinit var binding: ActivityEditItemBinding
-    lateinit var categoryAdapter: ArrayAdapter<String>
+    lateinit var categoryAdapter: ArrayAdapter<Category>
     private lateinit var database: AppDatabase
     private lateinit var mediaRepository: MediaRepository
+    private var mediaItemToEdit: MediaDto? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,59 +34,107 @@ class EditItemActivity: AppCompatActivity() {
 
         binding = ActivityEditItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         mediaRepository = MediaRepositoryImpl(AppDatabase.open(this).media)
 
-        binding.editItemDiscard.setOnClickListener {
-            finish()
-        }
-
-        binding.editItemSave.setOnClickListener {
-            val newItem = MediaDto(
-                id = 0,
-                icon = R.drawable.ic_launcher_foreground,
-                title = binding.editItemTitle.text.toString(),
-                releaseDate = binding.editItemPremierDateInput.text.toString(),
-                category = Category.valueOf(binding.editItemCategory.selectedItem.toString()),
-                status = Status.NOT_WATCHED,
-                comment = " "
-            )
-
-            lifecycleScope.launch {
-                mediaRepository.insert(newItem)
+        lifecycleScope.launch {
+            createDB()
+            val id = intent.getLongExtra("mediaItemId", -1)
+            if (id != -1L) {
+                val mediaItem = loadMediaItem(id)
+                mediaItem?.let {
+                    mediaItemToEdit = it
+                    populateData(it)
+                }
             }
-            finish()
         }
 
-        val mediaItemId = intent.getLongExtra("mediaItemId", -1)
+        setListeners()
 
         database = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "media"
         ).build()
+    }
 
-        lifecycleScope.launch {
-            createDB()
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            val resizedBitmap = resizeImage(uri, 120, 120)
+            resizedBitmap?.let { bitmap ->
+                binding.editItemImage.setImageBitmap(bitmap)
+            }
+        }
+    }
+
+
+    private fun populateData(mediaItem: MediaDto) {
+        binding.editItemTitle.setText(mediaItem.title)
+        binding.editItemImage.setImageResource(mediaItem.icon)
+        binding.editItemPremierDateInput.setText(mediaItem.releaseDate)
+        val categories = Category.entries.map { it }
+        categoryAdapter = ArrayAdapter<Category>(
+            this@EditItemActivity,
+            android.R.layout.simple_spinner_item,
+            categories.toTypedArray()
+        )
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.editItemCategory.adapter = categoryAdapter
+        val categoryName = mediaItem.category
+        val position = categoryAdapter.getPosition(categoryName)
+        binding.editItemCategory.setSelection(position)
+        binding.editItemComment.setText(mediaItem.comment)
+
+        if(mediaItem.status == Status.WATCHED) {
+            binding.editItemStatus.isChecked = true
+            binding.editItemComment.isEnabled = true
+        }
+        else {
+            binding.editItemStatus.isChecked = false
+            binding.editItemComment.isEnabled = false
         }
 
-        lifecycleScope.launch {
-            val mediaItem = loadMediaItem(mediaItemId)
-            if (mediaItem != null) {
-                binding.editItemTitle.setText(mediaItem.title)
-                binding.editItemPremierDateInput.setText(mediaItem.releaseDate)
-//                val categories = Category.values().map { it.name }
-//                categoryAdapter = ArrayAdapter(
-//                    this,
-//                    android.R.layout.simple_spinner_item,
-//                    categories
-//                )
-//                categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//                binding.editItemCategory.adapter = categoryAdapter
-//                val categoryName = mediaItem.category.name
-//                val position = categoryAdapter.getPosition(categoryName)
-//                binding.editItemCategory.setSelection(position)
+        binding.editItemStatus.setOnCheckedChangeListener { _, isChecked ->
+            binding.editItemComment.isEnabled = isChecked
+        }
+        if(mediaItem.status == Status.WATCHED) disableAll()
+    }
+
+    private fun disableAll() {
+        binding.editItemImage.isEnabled = false
+        binding.editItemTitle.isEnabled = false
+        binding.editItemPremierDateInput.isEnabled = false
+        binding.editItemCategory.isEnabled = false
+        binding.editItemStatus.isEnabled = false
+        binding.editItemComment.isEnabled = false
+        binding.editItemSave.isEnabled = false
+        binding.editItemEditInfo.isVisible = true
+    }
+
+    private fun setListeners(){
+        binding.editItemDiscard.setOnClickListener {
+            finish()
+        }
+
+        binding.editItemSave.setOnClickListener {
+            val existingItem = mediaItemToEdit
+            if (existingItem != null) {
+                val updatedItem = existingItem.copy(
+                    title = binding.editItemTitle.text.toString(),
+                    releaseDate = binding.editItemPremierDateInput.text.toString(),
+                    category = Category.valueOf(binding.editItemCategory.selectedItem.toString()),
+                    status = if (binding.editItemStatus.isChecked) Status.WATCHED else Status.NOT_WATCHED,
+                    comment = binding.editItemComment.text.toString()
+                )
+
+                lifecycleScope.launch {
+                    mediaRepository.update(updatedItem)
+                    finish()
+                }
             }
+        }
+
+        binding.editItemImage.setOnClickListener {
+            pickImage.launch("image/*")
         }
     }
 
@@ -93,4 +147,23 @@ class EditItemActivity: AppCompatActivity() {
     suspend fun createDB() = withContext (Dispatchers.IO) {
         val media = AppDatabase.open(this@EditItemActivity).media
     }
+
+    fun resizeImage(uri: Uri, maxWidth: Int, maxHeight: Int): Bitmap? {
+        val inputStream = contentResolver.openInputStream(uri)
+
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeStream(inputStream, null, options)
+
+        val scaleFactor = Math.min(options.outWidth / maxWidth, options.outHeight / maxHeight)
+
+        inputStream?.close()
+        val inputStream2 = contentResolver.openInputStream(uri)
+
+        options.inJustDecodeBounds = false
+        options.inSampleSize = scaleFactor
+
+        return BitmapFactory.decodeStream(inputStream2, null, options)
+    }
+
 }
