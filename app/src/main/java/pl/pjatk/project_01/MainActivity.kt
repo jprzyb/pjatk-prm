@@ -3,6 +3,7 @@ package pl.pjatk.project_01
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -64,7 +65,6 @@ class MainActivity : AppCompatActivity() {
             media.insert(MediaDto(2, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.myszka), "Myszka Miki", "18-11-1928", Category.MOVIE, Status.WATCHED, "I like it."))
             media.insert(MediaDto(3, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.reksio), "Reksio", "05-02-1967", Category.MOVIE, Status.NOT_WATCHED, ""))
         }
-        println(media.getAll().joinToString())
     }
 
     fun sortMediaListByDate(mediaList: List<MediaDto>, descending: Boolean = false): List<MediaDto> {
@@ -84,17 +84,32 @@ class MainActivity : AppCompatActivity() {
     fun setVars(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         mediaRepository = MediaRepositoryImpl(AppDatabase.open(this).media)
-        mediaListAdapter = MediaListAdapter { mediaItem ->
-            val intent = Intent(this, EditItemActivity::class.java)
-            intent.putExtra("mediaItemId", mediaItem.id.toLong())
-            startActivity(intent)
-        }
-
-        binding.mediaList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = mediaListAdapter
-        }
+        mediaListAdapter = MediaListAdapter(
+            onItemClicked = { mediaItem ->
+                val intent = Intent(this, EditItemActivity::class.java)
+                intent.putExtra("mediaItemId", mediaItem.id.toLong())
+                startActivity(intent)
+            },
+            onItemLongClicked = { mediaItem ->
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Delete item")
+                    .setMessage("Do you want to delete '${mediaItem.title}'?")
+                    .setPositiveButton("Yes") { dialog, which ->
+                        lifecycleScope.launch {
+                            mediaRepository.delete(mediaItem)
+                            mediaListAdapter.mediaList = sortMediaListByDate(mediaRepository.getMediaList())
+                        }
+                    }
+                    .setNegativeButton("No") { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            }
+        )
+        binding.mediaList.adapter = mediaListAdapter
+        binding.mediaList.layoutManager = LinearLayoutManager(this)
     }
+
 
     fun setListeners(){
         binding.addButton.setOnClickListener {
@@ -102,5 +117,4 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
 }

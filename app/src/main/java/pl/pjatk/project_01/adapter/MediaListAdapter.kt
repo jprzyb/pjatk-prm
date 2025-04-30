@@ -9,7 +9,11 @@ import pl.pjatk.project_01.databinding.ItemMediaBinding
 import pl.pjatk.project_01.model.MediaDto
 
 class MediaItem(val itemViewBinding: ItemMediaBinding) : RecyclerView.ViewHolder(itemViewBinding.root) {
-    fun onBind(mediaItem: MediaDto, onItemClicked: (MediaDto) -> Unit) = with(itemViewBinding) {
+    fun onBind(
+        mediaItem: MediaDto,
+        onItemClicked: (MediaDto) -> Unit,
+        onItemLongClicked: (MediaDto) -> Unit
+    ) = with(itemViewBinding) {
         title.text = mediaItem.title
         premierDate.text = mediaItem.releaseDate.toString()
         category.text = mediaItem.category.toString()
@@ -19,11 +23,18 @@ class MediaItem(val itemViewBinding: ItemMediaBinding) : RecyclerView.ViewHolder
         root.setOnClickListener {
             onItemClicked(mediaItem)
         }
+
+        root.setOnLongClickListener {
+            onItemLongClicked(mediaItem)
+            true
+        }
     }
 }
 
+
 class MediaListAdapter(
-    private val onItemClicked: (MediaDto) -> Unit
+    private val onItemClicked: (MediaDto) -> Unit,
+    private val onItemLongClicked: (MediaDto) -> Unit
 ) : RecyclerView.Adapter<MediaItem>() {
 
     var mediaList: List<MediaDto> = emptyList()
@@ -40,8 +51,10 @@ class MediaListAdapter(
     }
 
     override fun onBindViewHolder(holder: MediaItem, position: Int) {
-        holder.onBind(mediaList[position], onItemClicked)
+        holder.onBind(mediaList[position], onItemClicked, onItemLongClicked)
     }
 
     override fun getItemCount(): Int = mediaList.size
 }
+
+
