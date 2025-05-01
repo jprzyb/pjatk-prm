@@ -133,21 +133,26 @@ class AddItemActivity: AppCompatActivity() {
     private fun isEverythingFilled(): String {
         if(binding.addItemImage.drawable == R.drawable.ic_add.toDrawable()) return "Please add image!"
         else if(binding.addItemTitle.text.toString() == "Title" || binding.addItemTitle.text.toString().isEmpty()) return "Please add title!"
-        else if (!checkDate(binding.addItemPremierDateInput.text.toString())) return "Please add valid date(dd-mm-yyyy)!"
+        else if (!isValidDate(binding.addItemPremierDateInput.text.toString())) return "Please add valid date(dd-mm-yyyy)!"
+        else if (!isWithinTwoYearsFromToday(binding.addItemPremierDateInput.text.toString())) return "Date must be max w years after now!"
         return "ALL_GOOD"
     }
 
-}
+    private fun isValidDate(string: String): Boolean {
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        return try {
+            LocalDate.parse(string, formatter)
+            true
+        } catch (e: DateTimeParseException) {
+            false
+        }
+    }
 
-private fun checkDate(string: String): Boolean {
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    return try {
+    private fun isWithinTwoYearsFromToday(string: String): Boolean {
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         val inputDate = LocalDate.parse(string, formatter)
-
-        val today = LocalDate.now()
-        inputDate.isBefore(today) || inputDate.isEqual(today)
-    } catch (e: DateTimeParseException) {
-        false
+        val maxDate = LocalDate.now().plusYears(2)
+        return !inputDate.isAfter(maxDate)
     }
 }
 

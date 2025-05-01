@@ -86,9 +86,16 @@ class MainActivity : AppCompatActivity() {
         mediaRepository = MediaRepositoryImpl(AppDatabase.open(this).media)
         mediaListAdapter = MediaListAdapter(
             onItemClicked = { mediaItem ->
-                val intent = Intent(this, EditItemActivity::class.java)
-                intent.putExtra("mediaItemId", mediaItem.id.toLong())
-                startActivity(intent)
+                if(mediaItem.status == Status.WATCHED){
+                    val intent = Intent(this, SeeItemActivity::class.java)
+                    intent.putExtra("mediaItemId", mediaItem.id.toLong())
+                    startActivity(intent)
+                }
+                else{
+                    val intent = Intent(this, EditItemActivity::class.java)
+                    intent.putExtra("mediaItemId", mediaItem.id.toLong())
+                    startActivity(intent)
+                }
             },
             onItemLongClicked = { mediaItem ->
                 val builder = AlertDialog.Builder(this)

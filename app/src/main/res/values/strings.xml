@@ -28,5 +28,6 @@
     <string name="edit_item_status">Watched</string>
     <string name="edit_item_comment">Comment</string>
     <string name="edit_item_edit_info">You cannot edit watched item</string>
+    <string name="details_title">Details</string>
 
 </resources>
