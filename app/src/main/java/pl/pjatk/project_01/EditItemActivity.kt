@@ -164,7 +164,8 @@ class EditItemActivity: AppCompatActivity() {
         if(binding.editItemImage.drawable == R.drawable.ic_add.toDrawable()) return "Please add image!"
         else if(binding.editItemTitle.text.toString() == "Title" || binding.editItemTitle.text.toString().isEmpty()) return "Please add title!"
         else if (!isValidDate(binding.editItemPremierDateInput.text.toString())) return "Please add valid date(dd-mm-yyyy)!"
-        else if (!isWithinTwoYearsFromToday(binding.editItemPremierDateInput.text.toString())) return "Date must be max w years after now!"
+        else if (!isWithinTwoYearsFromToday(binding.editItemPremierDateInput.text.toString())) return "Date must be max 2 years after now!"
+        else if (!isntOldEnough(binding.editItemPremierDateInput.text.toString())) return "Date must be min 14-10-1888!"
         else if (binding.editItemStatus.isChecked && binding.editItemComment.text.isEmpty()) return "Please leave comment!"
         return "ALL_GOOD"
     }
@@ -184,6 +185,13 @@ class EditItemActivity: AppCompatActivity() {
         val inputDate = LocalDate.parse(string, formatter)
         val maxDate = LocalDate.now().plusYears(2)
         return !inputDate.isAfter(maxDate)
+    }
+
+    private fun isntOldEnough(string: String): Boolean {
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val inputDate = LocalDate.parse(string, formatter)
+        val minDate = LocalDate.parse("14-10-1888", formatter)
+        return !inputDate.isBefore(minDate)
     }
 
 }

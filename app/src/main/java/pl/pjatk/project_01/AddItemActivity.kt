@@ -91,7 +91,6 @@ class AddItemActivity: AppCompatActivity() {
                     status =  Status.NOT_WATCHED,
                     comment = ""
                 )
-
                 lifecycleScope.launch {
                     mediaRepository.insert(newItem)
                     finish()
@@ -116,7 +115,8 @@ class AddItemActivity: AppCompatActivity() {
         if(binding.addItemImage.drawable == R.drawable.ic_add.toDrawable()) return "Please add image!"
         else if(binding.addItemTitle.text.toString() == "Title" || binding.addItemTitle.text.toString().isEmpty()) return "Please add title!"
         else if (!isValidDate(binding.addItemPremierDateInput.text.toString())) return "Please add valid date(dd-mm-yyyy)!"
-        else if (!isWithinTwoYearsFromToday(binding.addItemPremierDateInput.text.toString())) return "Date must be max w years after now!"
+        else if (!isWithinTwoYearsFromToday(binding.addItemPremierDateInput.text.toString())) return "Date must be maximum 2 years after now!"
+        else if (!isntOldEnough(binding.addItemPremierDateInput.text.toString())) return "Date must be minimum 14-10-1888!"
         return "ALL_GOOD"
     }
 
@@ -135,6 +135,13 @@ class AddItemActivity: AppCompatActivity() {
         val inputDate = LocalDate.parse(string, formatter)
         val maxDate = LocalDate.now().plusYears(2)
         return !inputDate.isAfter(maxDate)
+    }
+
+    private fun isntOldEnough(string: String): Boolean {
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val inputDate = LocalDate.parse(string, formatter)
+        val minDate = LocalDate.parse("14-10-1888", formatter)
+        return !inputDate.isBefore(minDate)
     }
 }
 

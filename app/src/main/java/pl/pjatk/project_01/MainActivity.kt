@@ -69,9 +69,9 @@ class MainActivity : AppCompatActivity() {
     suspend fun createDB() = withContext (Dispatchers.IO) {
         val media = AppDatabase.open(this@MainActivity).media
         if(media.getAll().isEmpty()){
-            media.insert(MediaDto(1, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.koziolek), "Koziolek Matolek", "14-12-1932", Category.MOVIE, Status.WATCHED, "Good movie."))
+            media.insert(MediaDto(1, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.koziolek), "Koziolek Matolek", "14-12-1932", Category.DOCUMENTARY, Status.WATCHED, "Good movie."))
             media.insert(MediaDto(2, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.myszka), "Myszka Miki", "18-11-1928", Category.MOVIE, Status.WATCHED, "I like it."))
-            media.insert(MediaDto(3, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.reksio), "Reksio", "05-02-1967", Category.MOVIE, Status.NOT_WATCHED, ""))
+            media.insert(MediaDto(3, ImageUtils.iconToBitArray(this@MainActivity, R.drawable.reksio), "Reksio", "05-02-1967", Category.SERIES, Status.NOT_WATCHED, ""))
         }
     }
 
