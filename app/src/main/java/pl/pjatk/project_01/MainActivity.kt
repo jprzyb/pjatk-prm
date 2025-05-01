@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-//        deleteDatabase("media")
+        deleteDatabase("media")
         setVars()
         setContentView(binding.root)
         setListeners()

@@ -125,13 +125,14 @@ class EditItemActivity: AppCompatActivity() {
             val existingItem = mediaItemToEdit
             val validationMsg = isEverythingFilled()
             if (validationMsg == "ALL_GOOD" && existingItem != null) {
+                val com = if(binding.editItemStatus.isChecked) binding.editItemComment.text.toString() else ""
                 val updatedItem = existingItem.copy(
                     icon = ImageUtils.imageToBitArray(binding.editItemImage.drawable.toBitmap()),
                     title = binding.editItemTitle.text.toString(),
                     releaseDate = binding.editItemPremierDateInput.text.toString(),
                     category = Category.valueOf(binding.editItemCategory.selectedItem.toString()),
                     status = if (binding.editItemStatus.isChecked) Status.WATCHED else Status.NOT_WATCHED,
-                    comment = binding.editItemComment.text.toString()
+                    comment = com
                 )
 
                 lifecycleScope.launch {
