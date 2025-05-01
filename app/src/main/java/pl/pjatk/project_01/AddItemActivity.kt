@@ -68,10 +68,10 @@ class AddItemActivity: AppCompatActivity() {
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
-            val resizedBitmap = resizeImage(uri, 24, 24)
-            resizedBitmap?.let { bitmap ->
-                binding.addItemImage.setImageBitmap(bitmap)
-            }
+            val inputStream = contentResolver.openInputStream(it)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+            binding.addItemImage.setImageBitmap(bitmap)
         }
     }
 
@@ -110,24 +110,6 @@ class AddItemActivity: AppCompatActivity() {
 
     suspend fun createDB() = withContext (Dispatchers.IO) {
         val media = AppDatabase.open(this@AddItemActivity).media
-    }
-
-    fun resizeImage(uri: Uri, maxWidth: Int, maxHeight: Int): Bitmap? {
-        val inputStream = contentResolver.openInputStream(uri)
-
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(inputStream, null, options)
-
-        val scaleFactor = Math.min(options.outWidth / maxWidth, options.outHeight / maxHeight)
-
-        inputStream?.close()
-        val inputStream2 = contentResolver.openInputStream(uri)
-
-        options.inJustDecodeBounds = false
-        options.inSampleSize = scaleFactor
-
-        return BitmapFactory.decodeStream(inputStream2, null, options)
     }
 
     private fun isEverythingFilled(): String {

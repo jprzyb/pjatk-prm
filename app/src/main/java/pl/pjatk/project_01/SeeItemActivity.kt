@@ -54,12 +54,13 @@ class SeeItemActivity: AppCompatActivity() {
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
-            val resizedBitmap = resizeImage(uri, 120, 120)
-            resizedBitmap?.let { bitmap ->
-                binding.seeItemImage.setImageBitmap(bitmap)
-            }
+            val inputStream = contentResolver.openInputStream(it)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+            binding.seeItemImage.setImageBitmap(bitmap)
         }
     }
+
 
 
     private fun populateData(mediaItem: MediaDto) {
@@ -99,23 +100,5 @@ class SeeItemActivity: AppCompatActivity() {
 
     suspend fun createDB() = withContext(Dispatchers.IO) {
         val media = AppDatabase.Companion.open(this@SeeItemActivity).media
-    }
-
-    fun resizeImage(uri: Uri, maxWidth: Int, maxHeight: Int): Bitmap? {
-        val inputStream = contentResolver.openInputStream(uri)
-
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(inputStream, null, options)
-
-        val scaleFactor = Math.min(options.outWidth / maxWidth, options.outHeight / maxHeight)
-
-        inputStream?.close()
-        val inputStream2 = contentResolver.openInputStream(uri)
-
-        options.inJustDecodeBounds = false
-        options.inSampleSize = scaleFactor
-
-        return BitmapFactory.decodeStream(inputStream2, null, options)
     }
 }

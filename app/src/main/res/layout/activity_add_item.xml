@@ -9,6 +9,18 @@
     android:padding="16dp"
     android:tooltipText="@string/edit_item_status">
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editTitle"
+        app:layout_constraintEnd_toStartOf="@+id/editTitle"
+        app:layout_constraintTop_toTopOf="@+id/editTitle"
+        app:srcCompat="@drawable/ic_logo" />
+
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
@@ -58,7 +70,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/edit_desc"
-        android:text="@string/edit_title"
+        android:text="@string/add_title"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,9 +79,9 @@
 
     <ImageView
         android:id="@+id/add_item_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/edit_item_image"
         app:layout_constraintBottom_toTopOf="@+id/add_item_title"
