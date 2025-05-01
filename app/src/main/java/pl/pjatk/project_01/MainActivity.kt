@@ -1,7 +1,11 @@
 package pl.pjatk.project_01
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +31,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var mediaRepository: MediaRepository
     lateinit var mediaListAdapter: MediaListAdapter
+    lateinit var categoryAdapter: ArrayAdapter<Category>
+    lateinit var statusAdapter: ArrayAdapter<Status>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,13 +122,64 @@ class MainActivity : AppCompatActivity() {
         )
         binding.mediaList.adapter = mediaListAdapter
         binding.mediaList.layoutManager = LinearLayoutManager(this)
+
+        val categories = Category.entries.map { it }
+        categoryAdapter = ArrayAdapter<Category>(
+            this@MainActivity,
+            android.R.layout.simple_spinner_item,
+            categories.toTypedArray()
+        )
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.filterCategory.adapter = categoryAdapter
+
+        val statuses = Status.entries.map { it }
+        statusAdapter = ArrayAdapter<Status>(
+            this@MainActivity,
+            android.R.layout.simple_spinner_item,
+            statuses.toTypedArray()
+        )
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.filterStatus.adapter = statusAdapter
     }
 
 
-    fun setListeners(){
+    @SuppressLint("SetTextI18n")
+    fun setListeners() {
         binding.addButton.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
             startActivity(intent)
         }
+
+        val updateFilteredList = {
+            val selectedCategory = binding.filterCategory.selectedItem as Category
+            val selectedStatus = binding.filterStatus.selectedItem as Status
+
+            lifecycleScope.launch {
+                val allMedia = mediaRepository.getMediaList()
+                val filteredMedia = allMedia.filter {
+                    it.category == selectedCategory && it.status == selectedStatus
+                }
+                val sortedList = sortMediaListByDate(filteredMedia)
+                mediaListAdapter.mediaList = sortedList
+                binding.fetchedData.text = "Found: " + sortedList.size
+            }
+        }
+
+        binding.filterCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                updateFilteredList()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        binding.filterStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                updateFilteredList()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
+
 }

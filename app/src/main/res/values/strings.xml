@@ -30,5 +30,8 @@
     <string name="edit_item_edit_info">You cannot edit watched item</string>
     <string name="details_title">Details</string>
     <string name="add_title">Add</string>
+    <string name="filter_category">Category</string>
+    <string name="filter_status">Status</string>
+    <string name="fetched_data">Found:</string>
 
 </resources>
