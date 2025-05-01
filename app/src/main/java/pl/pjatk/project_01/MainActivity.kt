@@ -58,10 +58,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         lifecycleScope.launch {
             mediaListAdapter.mediaList = sortMediaListByDate(mediaRepository.getMediaList())
         }
+        binding.filterCategory.setSelection(categoryAdapter.getPosition(Category.ALL))
+        binding.filterStatus.setSelection(statusAdapter.getPosition(Status.ALL))
     }
 
 
@@ -140,6 +141,9 @@ class MainActivity : AppCompatActivity() {
         )
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.filterStatus.adapter = statusAdapter
+
+        binding.filterCategory.setSelection(categoryAdapter.getPosition(Category.ALL))
+        binding.filterStatus.setSelection(statusAdapter.getPosition(Status.ALL))
     }
 
 
@@ -157,11 +161,12 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val allMedia = mediaRepository.getMediaList()
                 val filteredMedia = allMedia.filter {
-                    it.category == selectedCategory && it.status == selectedStatus
+                    (selectedCategory == Category.ALL || it.category == selectedCategory) &&
+                            (selectedStatus == Status.ALL || it.status == selectedStatus)
                 }
                 val sortedList = sortMediaListByDate(filteredMedia)
                 mediaListAdapter.mediaList = sortedList
-                binding.fetchedData.text = "Found: " + sortedList.size
+                binding.fetchedData.text = "Found: ${sortedList.size}"
             }
         }
 

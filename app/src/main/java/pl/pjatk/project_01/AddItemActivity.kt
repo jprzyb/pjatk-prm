@@ -55,7 +55,7 @@ class AddItemActivity: AppCompatActivity() {
     }
 
     private fun populateData() {
-        val categories = Category.entries.map { it }
+        val categories = Category.entries.filter { it != Category.ALL }
         categoryAdapter = ArrayAdapter<Category>(
             this@AddItemActivity,
             android.R.layout.simple_spinner_item,

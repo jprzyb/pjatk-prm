@@ -76,14 +76,15 @@ class EditItemActivity: AppCompatActivity() {
         binding.editItemTitle.setText(mediaItem.title)
         binding.editItemImage.setImageBitmap(ImageUtils.bitArrayToBitmap(mediaItem.icon))
         binding.editItemPremierDateInput.setText(mediaItem.releaseDate)
-        val categories = Category.entries.map { it }
-        categoryAdapter = ArrayAdapter<Category>(
+        val categories = Category.entries.filter { it != Category.ALL }
+        categoryAdapter = ArrayAdapter(
             this@EditItemActivity,
             android.R.layout.simple_spinner_item,
             categories.toTypedArray()
         )
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.editItemCategory.adapter = categoryAdapter
+
         val categoryName = mediaItem.category
         val position = categoryAdapter.getPosition(categoryName)
         binding.editItemCategory.setSelection(position)
