@@ -97,6 +97,7 @@ class AddNoteActivity : AppCompatActivity() {
                 )
 
                 saveNoteSuspend(note)
+                setResult(Activity.RESULT_OK)
                 finish()
             }
         }

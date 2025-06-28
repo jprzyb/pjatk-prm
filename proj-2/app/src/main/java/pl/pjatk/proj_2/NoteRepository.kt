@@ -89,4 +89,27 @@ class NoteRepository(baseUrl: String = "http://10.0.2.2:8080/api/notes/") {
             }
         })
     }
+
+    fun deleteNote(note: Note, onSuccess: () -> Unit = {}, onError: (Throwable) -> Unit = {}) {
+        val id = note.id
+        if (id == null) {
+            onError(Throwable("Brak ID notatki do usunięcia"))
+            return
+        }
+
+        api.deleteNote(id).enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError(Throwable("Błąd podczas usuwania: ${response.code()}"))
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                onError(t)
+            }
+        })
+    }
+
 }
