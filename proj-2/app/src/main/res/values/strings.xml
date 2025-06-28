@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Notatki</string>
+    <string name="note_hint">Wpisz notatkę...</string>
+    <string name="location">Lokalizacja: brak</string>
+    <string name="add_location">Dodaj lokalizację</string>
+    <string name="take_photo">Zrób zdjęcie</string>
+    <string name="start_recording">Nagraj dźwięk</string>
+    <string name="stop_recording">Zakończ nagrywanie</string>
+    <string name="save_note">Zapisz notatkę</string>
+    <string name="city_found">Miasto: %1$s</string>
+</resources>
