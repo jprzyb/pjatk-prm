@@ -1,7 +1,9 @@
 package pl.pjatk.proj_2
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.squareup.picasso.Picasso
 import pl.pjatk.proj_2.databinding.ActivityNoteDetailBinding
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -19,6 +21,17 @@ class NoteDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val note = intent.getSerializableExtra("note") as? Note
+
+        if (note?.photoUrl != null) {
+            val imageView = findViewById<ImageView>(R.id.tvPhoto)
+
+            Picasso.get()
+                .load("http://10.0.2.2:8080/api/files/download/${note.photoUrl}")
+                .resize(400, 400)
+                .centerCrop()
+                .into(imageView)
+        }
+
 
         if (note != null) {
             binding.tvLocation.text = note.location

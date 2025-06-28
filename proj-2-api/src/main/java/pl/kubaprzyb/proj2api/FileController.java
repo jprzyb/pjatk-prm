@@ -15,7 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/api/files")
+@CrossOrigin(origins = "*")
 public class FileController {
 
     private final Path uploadDir = Paths.get("uploads");
@@ -45,22 +46,28 @@ public class FileController {
 
     @GetMapping("/download/{filename:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws MalformedURLException {
-        Path filePath = uploadDir.resolve(filename).normalize();
 
+        System.out.println("Sending file: " + filename);
+
+        Path filePath = uploadDir.resolve(filename).normalize();
         Resource resource = new UrlResource(filePath.toUri());
+
         if (!resource.exists()) {
             return ResponseEntity.notFound().build();
         }
 
-        String contentType = "application/octet-stream";
+        String contentType;
         try {
             contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "image/jpeg";
+            }
         } catch (IOException e) {
+            contentType = "image/jpeg";
         }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 }

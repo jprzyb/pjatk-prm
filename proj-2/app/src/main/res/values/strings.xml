@@ -13,4 +13,5 @@
     <string name="local_label">lokalizacja</string>
     <string name="note_label">Notatka:</string>
     <string name="photo_label">Zdjęcie:</string>
+    <string name="label_voice_note">Notatka głosowa:</string>
 </resources>
