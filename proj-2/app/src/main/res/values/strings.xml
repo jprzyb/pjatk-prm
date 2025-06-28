@@ -8,4 +8,9 @@
     <string name="stop_recording">Zakończ nagrywanie</string>
     <string name="save_note">Zapisz notatkę</string>
     <string name="city_found">Miasto: %1$s</string>
+    <string name="photo_url">Brak zdjęcia</string>
+    <string name="audio_url">Brak audio</string>
+    <string name="local_label">lokalizacja</string>
+    <string name="note_label">Notatka:</string>
+    <string name="photo_label">Zdjęcie:</string>
 </resources>

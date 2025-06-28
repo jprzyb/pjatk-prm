@@ -9,13 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 
 class NoteAdapter(
     private val notes: MutableList<Note>,
-    private val onNoteRemoved: (Note) -> Unit
+    private val onNoteRemoved: (Note) -> Unit,
+    private val onNoteClicked: (Note) -> Unit   // <-- dodany callback kliknięcia
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     inner class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val text: TextView = view.findViewById(android.R.id.text1)
 
         init {
+            view.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onNoteClicked(notes[position])
+                }
+            }
+
             view.setOnLongClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {

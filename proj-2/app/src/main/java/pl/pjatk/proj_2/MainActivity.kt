@@ -36,12 +36,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        noteAdapter = NoteAdapter(notes) { noteToRemove ->
-            repo.deleteNote(noteToRemove)
-            notes.remove(noteToRemove)
-            noteAdapter.notifyDataSetChanged()
-            Toast.makeText(this, "Usunięto notatkę", Toast.LENGTH_SHORT).show()
-        }
+        noteAdapter = NoteAdapter(notes,
+            onNoteRemoved = { noteToRemove ->
+                repo.deleteNote(noteToRemove)
+                notes.remove(noteToRemove)
+                noteAdapter.notifyDataSetChanged()
+                Toast.makeText(this, "Usunięto notatkę", Toast.LENGTH_SHORT).show()
+            },
+            onNoteClicked = { note ->
+                val intent = Intent(this, NoteDetailActivity::class.java)
+                intent.putExtra("note", note)
+                startActivity(intent)
+            }
+        )
 
         binding.noteList.apply {
             adapter = noteAdapter
@@ -62,6 +69,5 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Błąd: ${error.message}", Toast.LENGTH_LONG).show()
             }
         )
-
     }
 }
